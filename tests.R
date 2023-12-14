@@ -15,21 +15,21 @@ bindrowname <- function(result_list) {
   filter_all_na(datadf)
 }
 
-ge_manifest <- files()  %>%
-  filter(cases.project.project_id == "TCGA-OV")  %>%
-  filter(type == "gene_expression")  %>%
-  filter(analysis.workflow_type == "STAR - Counts")  %>%
-  filter(analysis.workflow_type == "STAR - Counts")  %>%
-  filter(access == "open")  %>%
+ge_manifest <- files() %>%
+  filter(cases.project.project_id == "TCGA-OV") %>%
+  filter(type == "gene_expression") %>%
+  filter(analysis.workflow_type == "STAR - Counts") %>%
+  filter(analysis.workflow_type == "STAR - Counts") %>%
+  filter(access == "open") %>%
   manifest(size = 5)
 
 expands <- c(
   "diagnoses", "annotations",
   "demographic", "exposures"
 )
-clin_results <- cases()  %>%
-  GenomicDataCommons::select(NULL)  %>%
-  GenomicDataCommons::expand(expands)  %>%
+clin_results <- cases() %>%
+  GenomicDataCommons::select(NULL) %>%
+  GenomicDataCommons::expand(expands) %>%
   results()
 demo_df <- filter_all_na(clin_results$demographic)
 exposures_df <- bindrowname(clin_results$exposures)
@@ -47,14 +47,14 @@ cases <- cases() %>%
 
 cases <- cases() %>%
   GenomicDataCommons::filter(project.project_id %in% tcga_project_ids) %>%
-  GenomicDataCommons::expand(expands)  %>%
+  GenomicDataCommons::expand(expands) %>%
   results_all()
 
-ge_manifest <- GenomicDataCommons::files()  %>%
-  GenomicDataCommons::filter(cases.project.project_id == "TCGA-OV")  %>%
-  GenomicDataCommons::filter(type == "gene_expression")  %>%
-  GenomicDataCommons::filter(analysis.workflow_type == "STAR - Counts")  %>%
-  GenomicDataCommons::filter(access == "open")  %>%
+ge_manifest <- GenomicDataCommons::files() %>%
+  GenomicDataCommons::filter(cases.project.project_id == "TCGA-OV") %>%
+  GenomicDataCommons::filter(type == "gene_expression") %>%
+  GenomicDataCommons::filter(analysis.workflow_type == "STAR - Counts") %>%
+  GenomicDataCommons::filter(access == "open") %>%
   GenomicDataCommons::manifest(size = 5)
 
 library(BiocParallel)
