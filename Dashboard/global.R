@@ -9,6 +9,7 @@ library(plotly)
 library(dplyr)
 library(htmltools)
 library(GenomicDataCommons)
+library(DT)
 
 projects <- GenomicDataCommons::projects() %>%
   GenomicDataCommons::filter(program.name == "TCGA") %>%
@@ -21,3 +22,5 @@ tcga_project_ids_list <- c("TODOS", tcga_project_ids_list)
 
 Sys.setenv(OPENSSL_CONF = "/dev/null")
 options(shiny.fullstacktrace = TRUE)
+
+source("explorer.R")

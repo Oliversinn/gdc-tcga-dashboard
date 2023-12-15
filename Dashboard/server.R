@@ -64,4 +64,59 @@ function(input, output, session) {
       selected = input$primary_site
     )
   })
+
+  # Explorer data ----
+  explorer_data_reactive <- reactive({
+    cases_info <- GenomicDataCommons::cases()
+
+    if (input$project_id == "TODOS") {
+      cases_info <- cases_info %>%
+        GenomicDataCommons::filter(
+          ~ project.project_id %in% tcga_project_ids_list
+        )
+    } else {
+      cases_info <- cases_info %>%
+        GenomicDataCommons::filter(
+          ~ project.project_id == input$project_id
+        )
+    }
+
+    if (input$disease_type != "TODOS") {
+      cases_info <- cases_info %>%
+        GenomicDataCommons::filter(
+          project.disease_type == input$disease_type
+        )
+    }
+
+    if (input$primary_site != "TODOS") {
+      cases_info <- cases_info %>%
+        GenomicDataCommons::filter(
+          project.primary_site == input$primary_site
+        )
+    }
+
+    cases_info <- cases_info %>%
+      GenomicDataCommons::facet(c(
+        "project.project_id",
+        "demographic.race",
+        "demographic.gender",
+        "demographic.ethnicity",
+        "demographic.vital_status",
+        "diagnoses.primary_diagnosis",
+        "diagnoses.site_of_resection_or_biopsy",
+        "primary_site"
+      )) %>%
+      aggregations()
+  })
+
+  # project_id ----
+  ## barplot ----
+  output$project_id_barplot <- renderPlotly({
+    project_id_barplot(explorer_data_reactive()$project.project_id)
+  })
+
+  ## datatable ----
+  output$project_id_dt <- renderDataTable({
+    project_id_dt(explorer_data_reactive()$project.project_id)
+  })
 }

@@ -25,7 +25,7 @@ cases_pre_info <- cases() %>%
   results_all()
 
 cases_info <- GenomicDataCommons::cases() %>%
-  GenomicDataCommons::filter(project.project_id %in% tcga_project_ids) %>%
+  GenomicDataCommons::filter(project.project_id %in% tcga_project_ids_list) %>%
   GenomicDataCommons::facet(c(
     "project.project_id",
     "demographic.race",
