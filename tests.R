@@ -19,7 +19,6 @@ ge_manifest <- files() %>%
   filter(cases.project.project_id == "TCGA-OV") %>%
   filter(type == "gene_expression") %>%
   filter(analysis.workflow_type == "STAR - Counts") %>%
-  filter(analysis.workflow_type == "STAR - Counts") %>%
   filter(access == "open") %>%
   manifest(size = 5)
 

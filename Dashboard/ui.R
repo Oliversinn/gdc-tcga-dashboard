@@ -38,33 +38,33 @@ fluidPage(
         ### project_id ----
         selectInput(
           "project_id",
-          label = "Poject ID",
-          choices = c("Project 1", "Project 2"),
-          selected = "Project 1"
+          label = "Proyecto",
+          choices = tcga_project_ids_list,
+          selected = tcga_project_ids_list[1]
         ),
         bsTooltip(
           "project_id",
           "Seleccionar un proyecto",
           placement = "right", trigger = "hover", options = NULL
         ),
-        ### primary_diagnosis ----
+        ### disease_type ----
         selectInput(
-          "primary_diagnosis",
-          label = "Primary diagnosis",
-          choices = c("Diagnosis 1", "Diagnosis 2"),
-          selected = "Diagnosis 1"
+          "disease_type",
+          label = "Tipo de enfermedad",
+          choices = c("TODOS"),
+          selected = "TODOS"
         ),
         bsTooltip(
-          "primary_diagnosis",
-          "Seleccionar un primary diagnosis",
+          "disease_type",
+          "Seleccionar un tipo de enfermedad",
           placement = "right", trigger = "hover", options = NULL
         ),
         ### primary_site ----
         selectInput(
           "primary_site",
           label = "Primary site",
-          choices = c("Site 1", "Site 2"),
-          selected = "Site 1"
+          choices = c("TODOS"),
+          selected = "TODOS"
         ),
         bsTooltip(
           "primary_site",
