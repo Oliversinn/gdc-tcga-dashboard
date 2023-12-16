@@ -109,14 +109,102 @@ function(input, output, session) {
       aggregations()
   })
 
-  # project_id ----
-  ## barplot ----
+  ## project_id ----
+  ### barplot ----
   output$project_id_barplot <- renderPlotly({
     project_id_barplot(explorer_data_reactive()$project.project_id)
   })
 
-  ## datatable ----
+  ### datatable ----
   output$project_id_dt <- renderDataTable({
     project_id_dt(explorer_data_reactive()$project.project_id)
+  })
+
+  ## primary_site ----
+  ### barplot ----
+  output$primary_site_barplot <- renderPlotly({
+    primary_site_barplot(
+      head(explorer_data_reactive()$primary_site, 30),
+      "Sitio primario"
+    )
+  })
+
+  ### datatable ----
+  output$primary_site_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$primary_site,
+      "Sitio primario",
+      "casos_por_sitio_primario"
+    )
+  })
+
+  ## race ----
+  ### barplot ----
+  output$race_barplot <- renderPlotly({
+    aggregation_barplot(
+      explorer_data_reactive()$demographic.race,
+      "Raza"
+    )
+  })
+
+  ### datatable ----
+  output$race_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$demographic.race,
+      "Raza",
+      "casos_por_raza"
+    )
+  })
+
+  ## ethnicity ----
+  ### barplot ----
+  output$ethnicity_barplot <- renderPlotly({
+    aggregation_barplot(
+      explorer_data_reactive()$demographic.ethnicity,
+      "Etnia"
+    )
+  })
+
+  ### datatable ----
+  output$ethnicity_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$demographic.ethnicity,
+      "Etnia",
+      "casos_por_etnia"
+    )
+  })
+
+  ## gender ----
+  ### barplot ----
+  output$gender_pie <- renderPlotly({
+    gender_pie(
+      explorer_data_reactive()$demographic.gender
+    )
+  })
+
+  ### datatable ----
+  output$gender_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$demographic.gender,
+      "Genero",
+      "casos_por_genero"
+    )
+  })
+
+  ## vital_status ----
+  ### barplot ----
+  output$vital_status_pie <- renderPlotly({
+    vital_status_pie(
+      explorer_data_reactive()$demographic.vital_status
+    )
+  })
+
+  ### datatable ----
+  output$vital_status_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$demographic.vital_status,
+      "Estado vital",
+      "casos_por_estado_vital"
+    )
   })
 }

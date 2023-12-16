@@ -16,7 +16,7 @@ fluidPage(
           padding-bottom: 1px; padding-right: 1px; padding-left: 1px;
           margin-bottom: 10px; background-color: transperent;'
           src='oliver_logo_blanco.png' height='50'></div>",
-          "<h2>Explorador de GDC - TCGA</h2> </center>"
+          "<h2>Explorador de Datos de GDC - TCGA</h2> </center>"
         )
       )
     )
@@ -27,7 +27,7 @@ fluidPage(
     # Dashboard header ----
     header = dashboardHeader(
       titleWidth = 300,
-      title = "Header title"
+      title = "Control de Mando"
     ),
     # Dashboard sidebar ----
     sidebar = dashboardSidebar(
@@ -118,11 +118,181 @@ fluidPage(
                       color = "#1c9ad6", type = "8", size = 0.5
                     )
                   ),
+                  #### datatable ----
                   tabPanel(
                     title = "Cuadro de datos",
                     icon = icon("table"),
                     shinycssloaders::withSpinner(
                       dataTableOutput("project_id_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              ),
+              ### primary_site ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de casos por Sitio Primario",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Sitio Primario (top 30)"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("primary_site_barplot", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("primary_site_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            ),
+            fluidRow(
+              ### race ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de Casos por Raza",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Raza"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("race_barplot", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("race_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              ),
+              ### ethnicity ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de Casos por Etnia",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Etnia"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("ethnicity_barplot", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("ethnicity_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            ),
+            fluidRow(
+              ### gender ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de Casos por Género",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Género"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("gender_pie", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("gender_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              ),
+              ### vital_status ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de Casos por Estado Vital",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Estado Vital"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("vital_status_pie", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("vital_status_dt"),
                       color = "#1c9ad6", type = "8", size = 0.5
                     )
                   )

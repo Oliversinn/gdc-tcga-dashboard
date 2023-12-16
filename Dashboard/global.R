@@ -10,6 +10,8 @@ library(dplyr)
 library(htmltools)
 library(GenomicDataCommons)
 library(DT)
+library(BiocManager)
+options(repos = BiocManager::repositories())
 
 projects <- GenomicDataCommons::projects() %>%
   GenomicDataCommons::filter(program.name == "TCGA") %>%

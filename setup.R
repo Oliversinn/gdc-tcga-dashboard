@@ -21,7 +21,7 @@ primary_sites <- unique(
 )
 
 cases_pre_info <- cases() %>%
-  GenomicDataCommons::filter(project.project_id %in% tcga_project_ids) %>%
+  GenomicDataCommons::filter(project.project_id %in% tcga_project_ids_list) %>%
   results_all()
 
 cases_info <- GenomicDataCommons::cases() %>%
