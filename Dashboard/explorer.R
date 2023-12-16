@@ -62,7 +62,7 @@ project_id_dt <- function(data) {
   return(data)
 }
 
-primary_site_barplot <- function(data, variable_name) {
+aggregation_substr_barplot <- function(data, variable_name) {
   data <- as.data.frame(data)
 
   xticks_labels <- as.list(substr(data$key, 1, 30))

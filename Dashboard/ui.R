@@ -92,7 +92,9 @@ fluidPage(
           ## Tab EXPLORADOR ----
           tabItem(
             tabName = "EXPLORADOR",
-            h2("Explorador de datos"),
+            h1("Explorador de datos"),
+            br(),
+            h2("Proyectos"),
             br(),
             fluidRow(
               width = 12,
@@ -163,6 +165,80 @@ fluidPage(
                 )
               )
             ),
+            fluidRow(
+              width = 12,
+              ### primary_diagnosis ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de casos por diagnóstico primario",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Diagnóstico Primario (top 30)"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("primary_diagnosis_barplot", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("primary_diagnosis_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              ),
+              ### site_of_resection_or_biopsy ----
+              box(
+                width = 6,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Número de casos por sitio de resección o biopsia",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### barplot ----
+                  tabPanel(
+                    title = "Gráfico de barras",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      paste0(
+                        "Número de Casos por ",
+                        "Sitio de Resección o Biopsia (top 30)"
+                      )
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("resection_site_barplot", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### datatable ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      dataTableOutput("resection_site_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            ),
+            h2("Demografía"),
+            br(),
             fluidRow(
               ### race ----
               box(

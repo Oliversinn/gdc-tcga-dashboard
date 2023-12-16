@@ -1,4 +1,12 @@
 function(input, output, session) {
+  # Static data ----
+  projects <- GenomicDataCommons::projects() %>%
+    GenomicDataCommons::filter(program.name == "TCGA") %>%
+    GenomicDataCommons::facet(c("name", "project_id")) %>%
+    results_all()
+
+  tcga_project_ids_list <- projects$project_id
+  tcga_project_ids_list <- c("TODOS", tcga_project_ids_list)
   # Filters ---
   ## projects_reactive ----
   projects_reactive <- reactive({
@@ -123,7 +131,7 @@ function(input, output, session) {
   ## primary_site ----
   ### barplot ----
   output$primary_site_barplot <- renderPlotly({
-    primary_site_barplot(
+    aggregation_substr_barplot(
       head(explorer_data_reactive()$primary_site, 30),
       "Sitio primario"
     )
@@ -135,6 +143,42 @@ function(input, output, session) {
       explorer_data_reactive()$primary_site,
       "Sitio primario",
       "casos_por_sitio_primario"
+    )
+  })
+
+  ## primary_diagnosis ----
+  ### barplot ----
+  output$primary_diagnosis_barplot <- renderPlotly({
+    aggregation_substr_barplot(
+      head(explorer_data_reactive()$diagnoses.primary_diagnosis, 30),
+      "Diagnóstico primario"
+    )
+  })
+
+  ### datatable ----
+  output$primary_diagnosis_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$diagnoses.primary_diagnosis,
+      "Diagnóstico primario",
+      "casos_por_diagnostico_primario"
+    )
+  })
+
+  ## site_of_resection_or_biopsy ----
+  ### barplot ----
+  output$resection_site_barplot <- renderPlotly({
+    aggregation_substr_barplot(
+      head(explorer_data_reactive()$diagnoses.site_of_resection_or_biopsy, 30),
+      "Sitio de Resección o Biopsia"
+    )
+  })
+
+  ### datatable ----
+  output$resection_site_dt <- renderDataTable({
+    aggregation_dt(
+      explorer_data_reactive()$diagnoses.site_of_resection_or_biopsy,
+      "Sitio de Resección o Biopsia",
+      "casos_por_sitio_de_reseccion_o_biopsia"
     )
   })
 
@@ -186,7 +230,7 @@ function(input, output, session) {
   output$gender_dt <- renderDataTable({
     aggregation_dt(
       explorer_data_reactive()$demographic.gender,
-      "Genero",
+      "Género",
       "casos_por_genero"
     )
   })
