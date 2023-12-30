@@ -35,4 +35,4 @@ po/*~
 rsconnect/
 # Mac cache
 .DS_Store
-tests.R
+*tests.R
