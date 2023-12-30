@@ -12,6 +12,15 @@ library(GenomicDataCommons)
 library(DT)
 library(BiocManager)
 options(repos = BiocManager::repositories())
+load(file = "tcga.RData")
+tcga_project_ids_list <- c("TODOS", tcga_project_ids_list)
+
+# Static data ----
+projects <- GenomicDataCommons::projects() %>%
+  GenomicDataCommons::filter(program.name == "TCGA") %>%
+  GenomicDataCommons::facet(c("name", "project_id")) %>%
+  results_all()
+
 
 Sys.setenv(OPENSSL_CONF = "/dev/null")
 options(shiny.fullstacktrace = TRUE)
