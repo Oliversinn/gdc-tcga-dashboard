@@ -1,12 +1,4 @@
 function(input, output, session) {
-  # Static data ----
-  projects <- GenomicDataCommons::projects() %>%
-    GenomicDataCommons::filter(program.name == "TCGA") %>%
-    GenomicDataCommons::facet(c("name", "project_id")) %>%
-    results_all()
-
-  tcga_project_ids_list <- projects$project_id
-  tcga_project_ids_list <- c("TODOS", tcga_project_ids_list)
   # Filters ---
   ## projects_reactive ----
   projects_reactive <- reactive({
@@ -32,12 +24,47 @@ function(input, output, session) {
     projects <- projects %>%
       GenomicDataCommons::results_all()
   })
+  
+  ## combined_cases_reactive ----
+  combined_cases_reactive <- reactive({
+    combined_cases_reactive <- combined_cases
+    
+    if(input$project_id != "TODOS") {
+      combined_cases_reactive <- combined_cases_reactive %>% 
+        dplyr::filter(project_id == input$project_id)
+    }
+    
+    if (input$disease_type != "TODOS") {
+      combined_cases_reactive <- combined_cases_reactive %>% 
+        dplyr::filter(disease_type == input$disease_type)
+    }
+    
+    if (input$primary_site != "TODOS") {
+      combined_cases_reactive <- combined_cases_reactive %>% 
+      dplyr::filter(primary_site == input$primary_site)
+    }
+    combined_cases_reactive
+  })
+  
+  ## combined_demographics_reactive ----
+  combined_demographics_reactive <- reactive({
+    combined_demographics_reactive <- combined_demographics[
+      combined_cases_reactive()$case_id,
+    ]
+    combined_demographics_reactive
+  })
+  
+  ## combined_diagnosis_reactive ----
+  combined_diagnoses_reactive <- reactive({
+    combined_diagnoses_reactive <- combined_diagnoses[
+      combined_diagnoses
+    ]
+    combined_diagnoses_reactive
+  })
 
   ## disease_type filter ----
   diseases_types_reactive <- reactive({
-    unique(
-      rapply(projects_reactive()$disease_type, function(x) head(x, 100))
-    )
+    unique(combined_cases_reactive()$disease_type)
   })
 
   diseases_types_list <- reactive({
@@ -55,9 +82,8 @@ function(input, output, session) {
 
   # primary_site filter ----
   primary_site_reactive <- reactive({
-    unique(
-      rapply(projects_reactive()$primary_site, function(x) head(x, 100))
-    )
+    unique(combined_cases_reactive()$primary_site)
+    
   })
 
   primary_site_list <- reactive({

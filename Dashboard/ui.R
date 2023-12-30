@@ -47,18 +47,6 @@ fluidPage(
           "Seleccionar un proyecto",
           placement = "right", trigger = "hover", options = NULL
         ),
-        ### disease_type ----
-        selectInput(
-          "disease_type",
-          label = "Tipo de enfermedad",
-          choices = c("TODOS"),
-          selected = "TODOS"
-        ),
-        bsTooltip(
-          "disease_type",
-          "Seleccionar un tipo de enfermedad",
-          placement = "right", trigger = "hover", options = NULL
-        ),
         ### primary_site ----
         selectInput(
           "primary_site",
@@ -71,10 +59,27 @@ fluidPage(
           "Seleccionar un primary site",
           placement = "right", trigger = "hover", options = NULL
         ),
+        ### disease_type ----
+        selectInput(
+          "disease_type",
+          label = "Tipo de enfermedad",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "disease_type",
+          "Seleccionar un tipo de enfermedad",
+          placement = "right", trigger = "hover", options = NULL
+        ),
         ## Initial tab ----
         menuItem(
           text = "Explorador",
           tabName = "EXPLORADOR",
+          icon = icon("square-check")
+        ),
+        menuItem(
+          text = "Explorador_old",
+          tabName = "EXPLORADOROLD",
           icon = icon("square-check")
         )
       )
@@ -89,11 +94,12 @@ fluidPage(
           )
         ),
         tabItems(
-          ## Tab EXPLORADOR ----
           tabItem(
-            tabName = "EXPLORADOR",
-            h1("Explorador de datos"),
-            br(),
+            tabName = "EXPLORADOR"
+          ),
+          ## Tab EXPLORADOROLD ----
+          tabItem(
+            tabName = "EXPLORADOROLD",
             h2("Proyectos"),
             br(),
             fluidRow(
