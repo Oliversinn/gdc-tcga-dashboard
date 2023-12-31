@@ -71,24 +71,6 @@ fluidPage(
           "Seleccionar un tipo de enfermedad",
           placement = "right", trigger = "hover", options = NULL
         ),
-        ### age_at_diagnosis ----
-        sliderInput(
-          "age_at_diagnosis",
-          label = "Edad al diagnostico",
-          min = min_diagnosis_age,
-          max = max_diagnosis_age,
-          value = c(min_diagnosis_age,max_diagnosis_age)
-        ),
-        bsTooltip(
-          "disease_type",
-          "Seleccionar un rango de edad",
-          placement = "right", trigger = "hover", options = NULL
-        ),
-        checkboxInput(
-          "age_at_diagnosis_na",
-          "Incluir NAs en Edad al diagnositico",
-          value = TRUE
-        ),
         ### tissue_or_organ_of_origin ----
         selectInput(
           "tissue_or_organ_of_origin",
@@ -124,6 +106,24 @@ fluidPage(
           "ajcc_pathologic_stage",
           "Seleccionar una etapa patológica",
           placement = "right", trigger = "hover", options = NULL
+        ),
+        ### age_at_diagnosis ----
+        sliderInput(
+          "age_at_diagnosis",
+          label = "Edad al diagnostico",
+          min = min_diagnosis_age,
+          max = max_diagnosis_age,
+          value = c(min_diagnosis_age,max_diagnosis_age)
+        ),
+        bsTooltip(
+          "disease_type",
+          "Seleccionar un rango de edad",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        checkboxInput(
+          "age_at_diagnosis_na",
+          "Incluir NAs en Edad al diagnositico",
+          value = TRUE
         ),
         ## Initial tab ----
         menuItem(
@@ -402,6 +402,28 @@ fluidPage(
                     icon = icon("table"),
                     shinycssloaders::withSpinner(
                       DT::dataTableOutput("pathologic_stage_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### pathologic_stage_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por edad al diagnóstico",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Etapa Patológica"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("age_at_diagnosis_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### pathologic_stage_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por edad al diagnóstico",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("age_at_diagnosis_bardt"),
                       color = "#1c9ad6", type = "8", size = 0.5
                     )
                   )

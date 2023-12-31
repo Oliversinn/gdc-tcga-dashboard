@@ -730,6 +730,26 @@ function(input, output, session) {
     )
   })
   
+  #### age_at_diagnosis_bar ----
+  output$age_at_diagnosis_bar <- renderPlotly({
+    age_at_diagnosis_bar(
+      combined_diagnoses_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### age_at_diagnosis_bardt ----
+  output$age_at_diagnosis_bardt <- DT::renderDataTable({
+    age_at_diagnosis_bardt(
+      combined_diagnoses_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
 
   # Explorer data ----
   explorer_data_reactive <- reactive({
