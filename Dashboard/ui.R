@@ -23,7 +23,7 @@ fluidPage(
   ),
   dashboardPage(
     skin = "purple",
-    title = "Skin title",
+    title = "GDC - TCGA",
     # Dashboard header ----
     header = dashboardHeader(
       titleWidth = 300,
@@ -71,6 +71,60 @@ fluidPage(
           "Seleccionar un tipo de enfermedad",
           placement = "right", trigger = "hover", options = NULL
         ),
+        ### age_at_diagnosis ----
+        sliderInput(
+          "age_at_diagnosis",
+          label = "Edad al diagnostico",
+          min = min_diagnosis_age,
+          max = max_diagnosis_age,
+          value = c(min_diagnosis_age,max_diagnosis_age)
+        ),
+        bsTooltip(
+          "disease_type",
+          "Seleccionar un rango de edad",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        checkboxInput(
+          "age_at_diagnosis_na",
+          "Incluir NAs en Edad al diagnositico",
+          value = TRUE
+        ),
+        ### tissue_or_organ_of_origin ----
+        selectInput(
+          "tissue_or_organ_of_origin",
+          label = "Tejido u órgano de origen",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "tissue_or_organ_of_origin",
+          "Seleccionar un tejido u órgano de origen",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        ### primary_diagnosis ----
+        selectInput(
+          "primary_diagnosis",
+          label = "Diagnóstico primario",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "primary_diagnosis",
+          "Seleccionar un tejido u diagnóstico primario",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        ### ajcc_pathologic_stage ----
+        selectInput(
+          "ajcc_pathologic_stage",
+          label = "Etapa patológica",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "ajcc_pathologic_stage",
+          "Seleccionar una etapa patológica",
+          placement = "right", trigger = "hover", options = NULL
+        ),
         ## Initial tab ----
         menuItem(
           text = "Explorador",
@@ -108,7 +162,7 @@ fluidPage(
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                title = "Proyectos",
+                title = "Información sobre los proyectos",
                 tabBox(
                   width = 12,
                   height = NULL,
@@ -201,6 +255,153 @@ fluidPage(
                     icon = icon("table"),
                     shinycssloaders::withSpinner(
                       DT::dataTableOutput("primary_site_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            ),
+            fluidRow(
+              width = 12,
+              box(
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Información sobre los diagnósticos",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  ### primary_diagnosis_treemap ----
+                  tabPanel(
+                    title = "Mapa de arbol de tejidos y diagnósticos",
+                    icon = icon("table-cells"),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "primary_diagnosis_treemap",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Prueba hacer click para expandir la información")
+                    )
+                  ),
+                  ### primary_diagnosis_treedt ----
+                  tabPanel(
+                    title = paste0(
+                      "Cuadro de datos del mapa de arbol de",
+                      " tejido y diagnóstico"
+                    ),
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("primary_diagnosis_treedt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### primary_stage_treemap ----
+                  tabPanel(
+                    title = "Mapa de arbol de tejidos y etapa patológica",
+                    icon = icon("table-cells"),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "pathologic_stage_treemap",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Prueba hacer click para expandir la información")
+                    )
+                  ),
+                  ### primary_stage_treedt ----
+                  tabPanel(
+                    title = paste0(
+                      "Cuadro de datos del mapa de arbol de",
+                      "tejido y etapa patológica"
+                    ),
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("pathologic_stage_treedt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### tissue_origin_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por tejido de origen",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Tejido u Organo de Origen"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("tissue_origin_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Se muestran como máximo los 30 con más casos.")
+                    )
+                  ),
+                  ### tissue_origin_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por tejido de origen",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("tissue_origin_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### primary_diagnosis_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por diagnóstico primario",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Diagnóstico Primario"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("primary_diagnosis_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Se muestran como máximo los 30 con más casos.")
+                    )
+                  ),
+                  ### primary_diagnosis_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por diagnóstico primario",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("primary_diagnosis_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### pathologic_stage_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por etapa patológica",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Etapa Patológica"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("pathologic_stage_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### pathologic_stage_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por etapa patológica",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("pathologic_stage_bardt"),
                       color = "#1c9ad6", type = "8", size = 0.5
                     )
                   )

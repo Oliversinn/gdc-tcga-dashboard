@@ -31,3 +31,4 @@ options(shiny.fullstacktrace = TRUE)
 
 source("explorer.R")
 source("project.R")
+source("diagnosis.R")

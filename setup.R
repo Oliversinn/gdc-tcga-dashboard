@@ -33,6 +33,7 @@ combined_cases <- data.frame(
     join_by(case_id)
   )
 
+
 # combined_diagnoses ----
 combined_diagnoses <- lapply(
   clin_results$diagnoses, function(inner_list) inner_list
@@ -43,6 +44,9 @@ combined_diagnoses <- lapply(
       ~!all(is.na(.x))
     )
   )
+combined_diagnoses$age_at_diagnosis_years = floor(
+  combined_diagnoses$age_at_diagnosis / 365
+)
 
 # combined_demographics ----
 combined_demographics <- as.data.frame(clin_results$demographic) %>% 
@@ -51,6 +55,7 @@ combined_demographics <- as.data.frame(clin_results$demographic) %>%
       ~!all(is.na(.x))
     )
   )
+combined_demographics$case_id <- rownames(combined_demographics)
 
 # files_info ----
 files_info <- GenomicDataCommons::files() %>%
@@ -112,5 +117,19 @@ files_results <- as.data.frame(
 )
 
 tcga_project_ids_list <- unique(combined_cases$project_id)
+
+case_id_list <- unique(combined_cases$case_id)
+
+
+
+min_diagnosis_age <- floor(
+  min(combined_diagnoses$age_at_diagnosis, na.rm = TRUE) / 365
+)
+
+max_diagnosis_age <- floor(
+  max(combined_diagnoses$age_at_diagnosis, na.rm = TRUE) / 365
+)
+
+rm(clin_results)
 
 save.image(file = paste0(path_global, "/Dashboard/tcga.RData"))
