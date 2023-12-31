@@ -57,6 +57,7 @@ combined_demographics <- as.data.frame(clin_results$demographic) %>%
   )
 combined_demographics$case_id <- rownames(combined_demographics)
 
+
 # files_info ----
 files_info <- GenomicDataCommons::files() %>%
   GenomicDataCommons::filter(
@@ -120,14 +121,20 @@ tcga_project_ids_list <- unique(combined_cases$project_id)
 
 case_id_list <- unique(combined_cases$case_id)
 
-
-
 min_diagnosis_age <- floor(
   min(combined_diagnoses$age_at_diagnosis, na.rm = TRUE) / 365
 )
 
 max_diagnosis_age <- floor(
   max(combined_diagnoses$age_at_diagnosis, na.rm = TRUE) / 365
+)
+
+min_age <- floor(
+  min(combined_demographics$age_at_index, na.rm = TRUE)
+)
+
+max_age <- floor(
+  max(combined_demographics$age_at_index, na.rm = TRUE)
 )
 
 rm(clin_results)

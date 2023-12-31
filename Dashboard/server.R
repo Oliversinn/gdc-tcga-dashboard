@@ -49,6 +49,51 @@ function(input, output, session) {
   ## combined_demographics_reactive ----
   combined_demographics_reactive <- reactive({
     combined_demographics_reactive <- combined_demographics
+    
+    if (input$age_at_index_na) {
+      combined_demographics_reactive <- combined_demographics_reactive %>% 
+        dplyr::filter(
+          (age_at_index >= input$age_at_index[1] &
+             age_at_index <= input$age_at_index[2]) |
+            is.na(age_at_index)
+        )
+    } else {
+      combined_demographics_reactive <- combined_demographics_reactive %>% 
+        dplyr::filter(
+          !is.na(age_at_index),
+          (age_at_index >= input$age_at_index[1] &
+             age_at_index <= input$age_at_index[2])
+        )
+    }
+    
+    if (input$race != "TODOS") {
+      combined_demographics_reactive <- combined_demographics_reactive %>% 
+        dplyr::filter(
+          race == input$race
+        )
+    }
+    
+    if (input$ethnicity != "TODOS") {
+      combined_demographics_reactive <- combined_demographics_reactive %>% 
+        dplyr::filter(
+          ethnicity == input$ethnicity
+        )
+    }
+    
+    if (input$vital_status != "TODOS") {
+      combined_demographics_reactive <- combined_demographics_reactive %>% 
+        dplyr::filter(
+          vital_status == input$vital_status
+        )
+    }
+    
+    if (input$gender != "TODOS") {
+      combined_demographics_reactive <- combined_demographics_reactive %>% 
+        dplyr::filter(
+          gender == input$gender
+        )
+    }
+    
     combined_demographics_reactive
   })
   
@@ -176,7 +221,7 @@ function(input, output, session) {
     )
   })
   
-  # primary_diagnosis filter ----
+  # ajcc_pathologic_stage_reactive filter ----
   ajcc_pathologic_stage_reactive <- reactive({
     unique(combined_diagnoses_reactive()$ajcc_pathologic_stage)
     
@@ -192,6 +237,94 @@ function(input, output, session) {
       "ajcc_pathologic_stage",
       choices = ajcc_pathologic_stage_list(),
       selected = input$ajcc_pathologic_stage
+    )
+  })
+  
+  # race_reactive filter ----
+  race_reactive <- reactive({
+    unique(combined_demographics_reactive()[
+      !is.na(combined_demographics_reactive()$race),
+      "race"
+    ])
+    
+  })
+  
+  race_list <- reactive({
+    c("TODOS", race_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "race",
+      choices = race_list(),
+      selected = input$race
+    )
+  })
+  
+  # ethnicity_reactive filter ----
+  ethnicity_reactive <- reactive({
+    unique(combined_demographics_reactive()[
+      !is.na(combined_demographics_reactive()$ethnicity),
+      "ethnicity"
+    ])
+    
+  })
+  
+  ethnicity_list <- reactive({
+    c("TODOS", ethnicity_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "ethnicity",
+      choices = ethnicity_list(),
+      selected = input$ethnicity
+    )
+  })
+  
+  # vital_status_reactive filter ----
+  vital_status_reactive <- reactive({
+    unique(combined_demographics_reactive()[
+      !is.na(combined_demographics_reactive()$vital_status),
+      "vital_status"
+    ])
+    
+  })
+  
+  vital_status_list <- reactive({
+    c("TODOS", vital_status_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "vital_status",
+      choices = vital_status_list(),
+      selected = input$vital_status
+    )
+  })
+  
+  # gender_reactive filter ----
+  gender_reactive <- reactive({
+    unique(combined_demographics_reactive()[
+      !is.na(combined_demographics_reactive()$gender),
+      "gender"
+    ])
+    
+  })
+  
+  gender_list <- reactive({
+    c("TODOS", gender_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "gender",
+      choices = gender_list(),
+      selected = input$gender
     )
   })
 
@@ -239,6 +372,7 @@ function(input, output, session) {
         ]
       )
     )
+    
     
   })
   
@@ -468,6 +602,228 @@ function(input, output, session) {
   
   #### Observe ajcc_pathologic_stage ----
   observeEvent(input$ajcc_pathologic_stage, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          combined_diagnoses_reactive()$case_id,
+          combined_demographics_reactive()$case_id 
+        ),
+        combined_cases_reactive()$case_id
+      )
+    )
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+  })
+  
+  #### Observe race ----
+  observeEvent(input$race, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          combined_diagnoses_reactive()$case_id,
+          combined_demographics_reactive()$case_id 
+        ),
+        combined_cases_reactive()$case_id
+      )
+    )
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+  })
+  
+  #### Observe ethnicity ----
+  observeEvent(input$ethnicity, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          combined_diagnoses_reactive()$case_id,
+          combined_demographics_reactive()$case_id 
+        ),
+        combined_cases_reactive()$case_id
+      )
+    )
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+  })
+  
+  #### Observe vital_status ----
+  observeEvent(input$vital_status, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          combined_diagnoses_reactive()$case_id,
+          combined_demographics_reactive()$case_id 
+        ),
+        combined_cases_reactive()$case_id
+      )
+    )
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+  })
+  
+  #### Observe gender ----
+  observeEvent(input$gender, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          combined_diagnoses_reactive()$case_id,
+          combined_demographics_reactive()$case_id 
+        ),
+        combined_cases_reactive()$case_id
+      )
+    )
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+  })
+  
+  #### Observe age_at_index ----
+  observeEvent(input$age_at_index, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          combined_diagnoses_reactive()$case_id,
+          combined_demographics_reactive()$case_id 
+        ),
+        combined_cases_reactive()$case_id
+      )
+    )
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+  })
+  
+  #### Observe age_at_index_na ----
+  observeEvent(input$age_at_index_na, {
     case_ids$case_id <- unique(
       intersect(
         intersect(
@@ -750,6 +1106,87 @@ function(input, output, session) {
     )
   })
   
+  ## Demographics ----
+  #### race_pie ----
+  output$race_pie <- renderPlotly({
+    race_pie(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### race_piedt ----
+  output$race_piedt <- DT::renderDataTable({
+    race_piedt(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### ethnicity_pie ----
+  output$ethnicity_pie <- renderPlotly({
+    ethnicity_pie(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### ethnicity_piedt ----
+  output$ethnicity_piedt <- DT::renderDataTable({
+    ethnicity_piedt(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### vital_status_pie ----
+  output$vital_status_pie <- renderPlotly({
+    vital_status_pie(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### vital_status_piedt ----
+  output$vital_status_piedt <- DT::renderDataTable({
+    vital_status_piedt(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### gender_age_pyramid ----
+  output$gender_age_pyramid <- renderPlotly({
+    gender_age_pyramid(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### gender_age_pyramiddt ----
+  output$gender_age_pyramiddt <- DT::renderDataTable({
+    gender_age_pyramiddt(
+      combined_demographics_reactive() %>% 
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
 
   # Explorer data ----
   explorer_data_reactive <- reactive({
@@ -898,13 +1335,6 @@ function(input, output, session) {
     )
   })
 
-  ## gender ----
-  ### barplot ----
-  output$gender_pie <- renderPlotly({
-    gender_pie(
-      explorer_data_reactive()$demographic.gender
-    )
-  })
 
   ### datatable ----
   output$gender_dt <- renderDataTable({
@@ -912,14 +1342,6 @@ function(input, output, session) {
       explorer_data_reactive()$demographic.gender,
       "Género",
       "casos_por_genero"
-    )
-  })
-
-  ## vital_status ----
-  ### barplot ----
-  output$vital_status_pie <- renderPlotly({
-    vital_status_pie(
-      explorer_data_reactive()$demographic.vital_status
     )
   })
 
