@@ -50,7 +50,7 @@ fluidPage(
         ### primary_site ----
         selectInput(
           "primary_site",
-          label = "Primary site",
+          label = "Sitio primario",
           choices = c("TODOS"),
           selected = "TODOS"
         ),
@@ -94,8 +94,119 @@ fluidPage(
           )
         ),
         tabItems(
+          ## Tab EXPLORADOR ----
           tabItem(
-            tabName = "EXPLORADOR"
+            tabName = "EXPLORADOR",
+            fluidRow(
+              valueBoxOutput("box_proyectos", width = 4),
+              valueBoxOutput("box_casos", width = 4),
+              valueBoxOutput("box_disease_type", width = 4)
+            ),
+            fluidRow(
+              width = 12,
+              box(
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Proyectos",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  ### project_disease_type_treemap ----
+                  tabPanel(
+                    title = "Mapa de arbol",
+                    icon = icon("table-cells"),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "project_disease_type_treemap",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Prueba hacer click para expandir la información")
+                    )
+                  ),
+                  ### project_disease_type_treedt ----
+                  tabPanel(
+                    title = "Cuadro de datos del mapa de arbol",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("project_disease_type_treedt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### project_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por proyecto",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Proyecto"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("project_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### project_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por proyecto",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("project_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### disease_type_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por Tipo de Enfermedad",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Tipo de Enfermedad"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("disease_type_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### disease_type_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por tipo de enfermedad",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("disease_type_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### primary_site_bar ----
+                  tabPanel(
+                    title = "Gráfico de barras por sitio primario",
+                    icon = icon("chart-bar"),
+                    h4(
+                      class = "text-center",
+                      "Número de Casos por Sitio Primario"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput("primary_site_bar", height = 500),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  ### primary_site_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos por sitio primario",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("primary_site_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            )
           ),
           ## Tab EXPLORADOROLD ----
           tabItem(

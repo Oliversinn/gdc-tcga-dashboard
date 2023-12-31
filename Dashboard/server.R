@@ -98,6 +98,142 @@ function(input, output, session) {
       selected = input$primary_site
     )
   })
+  
+  ## Explorer ----
+  ### Value boxes ----
+  box_data <- reactiveValues()
+  box_data$proyectos <- 0
+  box_data$casos <- 0
+  box_data$disease_type <- 0
+  
+  #### Observe project_id ----
+  observeEvent(input$project_id, {
+    box_data$proyectos <- length(
+      unique(combined_cases_reactive()$project_id)
+    )
+    box_data$casos <- length(
+      unique(combined_cases_reactive()$case_id)
+    )
+    box_data$disease_type <- length(
+      unique(combined_cases_reactive()$disease_type)
+    )
+  })
+  
+  #### Observe disease_type ----
+  observeEvent(input$disease_type, {
+    box_data$proyectos <- length(
+      unique(combined_cases_reactive()$project_id)
+    )
+    box_data$casos <- length(
+      unique(combined_cases_reactive()$case_id)
+    )
+    box_data$disease_type <- length(
+      unique(combined_cases_reactive()$disease_type)
+    )
+  })
+  
+  #### Observe primary_site ----
+  observeEvent(input$primary_site, {
+    box_data$proyectos <- length(
+      unique(combined_cases_reactive()$project_id)
+    )
+    box_data$casos <- length(
+      unique(combined_cases_reactive()$case_id)
+    )
+    box_data$disease_type <- length(
+      unique(combined_cases_reactive()$disease_type)
+    )
+  })
+  
+  #### Boxes ----
+  ##### Proyectos ----
+  output$box_proyectos <- renderValueBox({
+    valueBox(
+      vb_style(
+        box_data$proyectos, "font-size: 90%;"
+      ),
+      vb_style(
+        "Número de proyectos", "font-size: 95%;"
+      ),
+      icon = icon("wand-magic-sparkles"),
+      color = "purple"
+    )
+  })
+  
+  ##### Casos ----
+  output$box_casos <- renderValueBox({
+    valueBox(
+      vb_style(
+        box_data$casos, "font-size: 90%;"
+      ),
+      vb_style(
+        "Número de casos", "font-size: 95%;"
+      ),
+      icon = icon("user"),
+      color = "purple"
+    )
+  })
+  
+  ##### disease_type ----
+  output$box_disease_type <- renderValueBox({
+    valueBox(
+      vb_style(
+        box_data$disease_type, "font-size: 90%;"
+      ),
+      vb_style(
+        "Número de tipos de enfermedad", "font-size: 95%;"
+      ),
+      icon = icon("disease"),
+      color = "purple"
+    )
+  })
+  
+  ### Project ----
+  #### project_disease_type_treemap ----
+  output$project_disease_type_treemap <- renderPlotly({
+    project_disease_type_treemap(combined_cases_reactive())
+  })
+  
+  #### project_disease_type_treedt ----
+  output$project_disease_type_treedt <- DT::renderDataTable({
+    project_disease_type_treedt(combined_cases_reactive())
+  })
+  
+  #### project_bar ----
+  output$project_bar <- renderPlotly({
+    project_bar(combined_cases_reactive())
+  })
+  
+  #### project_bardt ----
+  output$project_bardt <- DT::renderDataTable({
+    project_bardt(combined_cases_reactive())
+  })
+  
+  #### disease_type ----
+  output$disease_type_bar <- renderPlotly({
+    disease_type_bar(combined_cases_reactive())
+  })
+  
+  #### disease_typedt ----
+  output$disease_type_bardt <- DT::renderDataTable({
+    disease_type_bardt(combined_cases_reactive())
+  })
+  
+  #### primary_site_bar ----
+  output$primary_site_bar <- renderPlotly({
+    primary_site_bar(combined_cases_reactive())
+  })
+  
+  #### primary_site_bardt ----
+  output$primary_site_bardt <- DT::renderDataTable({
+    primary_site_bardt(combined_cases_reactive())
+  })
+  
+
+  
+  
+  
+  
 
   # Explorer data ----
   explorer_data_reactive <- reactive({
@@ -142,6 +278,8 @@ function(input, output, session) {
       )) %>%
       aggregations()
   })
+  
+  
 
   ## project_id ----
   ### barplot ----
