@@ -9,6 +9,7 @@ library(plotly)
 library(dplyr)
 library(htmltools)
 library(GenomicDataCommons)
+library(epikit)
 library(DT)
 library(BiocManager)
 
