@@ -4,4 +4,4 @@ setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 rm(list = ls())
 
 source("setup.R")
-runApp('Dashboard')
+runApp("Dashboard")

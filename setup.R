@@ -2,17 +2,17 @@ library(GenomicDataCommons)
 library(dplyr)
 
 # setup ----
-path_global = dirname(rstudioapi::getSourceEditorContext()$path)
+path_global <- dirname(rstudioapi::getSourceEditorContext()$path)
 
 # Get diagnosis, demographic and project ----
-expands = c("diagnoses", "demographic", "project")
-clin_results = cases() %>%
+expands <- c("diagnoses", "demographic", "project")
+clin_results <- cases() %>%
   GenomicDataCommons::select(
     c(
       "disease_type",
       "primary_site"
     )
-  ) %>% 
+  ) %>%
   GenomicDataCommons::filter(project.program.name == "TCGA") %>%
   GenomicDataCommons::expand(expands) %>%
   GenomicDataCommons::results_all()
@@ -22,7 +22,7 @@ combined_cases <- data.frame(
   case_id = clin_results$case_id,
   project_id = clin_results$project$project_id,
   project_name = clin_results$project$name
-) %>% 
+) %>%
   left_join(
     .,
     data.frame(
@@ -38,21 +38,21 @@ combined_cases <- data.frame(
 combined_diagnoses <- lapply(
   clin_results$diagnoses, function(inner_list) inner_list
 ) %>%
-  bind_rows(.id = "case_id") %>% 
+  bind_rows(.id = "case_id") %>%
   select(
     where(
-      ~!all(is.na(.x))
+      ~ !all(is.na(.x))
     )
   )
-combined_diagnoses$age_at_diagnosis_years = floor(
+combined_diagnoses$age_at_diagnosis_years <- floor(
   combined_diagnoses$age_at_diagnosis / 365
 )
 
 # combined_demographics ----
-combined_demographics <- as.data.frame(clin_results$demographic) %>% 
+combined_demographics <- as.data.frame(clin_results$demographic) %>%
   select(
     where(
-      ~!all(is.na(.x))
+      ~ !all(is.na(.x))
     )
   )
 combined_demographics$case_id <- rownames(combined_demographics)
@@ -65,7 +65,7 @@ files_info <- GenomicDataCommons::files() %>%
   ) %>%
   GenomicDataCommons::filter(
     access == "open"
-  ) %>% 
+  ) %>%
   GenomicDataCommons::facet(
     c(
       "data_category",
@@ -80,13 +80,13 @@ files_info <- GenomicDataCommons::files() %>%
   aggregations()
 
 # files_result ----
-files_results <- GenomicDataCommons::files() %>% 
+files_results <- GenomicDataCommons::files() %>%
   GenomicDataCommons::filter(
     cases.project.program.name == "TCGA"
   ) %>%
   GenomicDataCommons::filter(
     access == "open"
-  ) %>% 
+  ) %>%
   GenomicDataCommons::select(
     c(
       "cases.project.project_id",
@@ -97,24 +97,24 @@ files_results <- GenomicDataCommons::files() %>%
       "experimental_strategy",
       "wgs_coverage"
     )
-  ) %>% 
+  ) %>%
   GenomicDataCommons::results_all()
 
 # files_cases ----
 files_cases <- lapply(
   files_results$cases, function(inner_list) inner_list
 ) %>%
-  bind_rows(.id = "file_id") %>% 
+  bind_rows(.id = "file_id") %>%
   select(
     where(
-      ~!all(is.na(.x))
+      ~ !all(is.na(.x))
     )
-  ) %>% 
+  ) %>%
   unnest(., project)
 
 files_results <- as.data.frame(
   within(files_results, rm(cases))
-) %>% 
+) %>%
   select(-id)
 
 tcga_project_ids_list <- unique(combined_cases$project_id)

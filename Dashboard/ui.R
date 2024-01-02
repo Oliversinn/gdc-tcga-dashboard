@@ -113,7 +113,7 @@ fluidPage(
           label = "Edad al diagnostico",
           min = min_diagnosis_age,
           max = max_diagnosis_age,
-          value = c(min_diagnosis_age,max_diagnosis_age)
+          value = c(min_diagnosis_age, max_diagnosis_age)
         ),
         bsTooltip(
           "disease_type",
@@ -179,7 +179,7 @@ fluidPage(
           label = "Edad",
           min = min_age,
           max = max_age,
-          value = c(min_diagnosis_age,max_diagnosis_age)
+          value = c(min_diagnosis_age, max_diagnosis_age)
         ),
         bsTooltip(
           "age_at_index",
@@ -716,8 +716,8 @@ fluidPage(
                   # experimental_strategy_treedt ----
                   tabPanel(
                     title = paste(
-                      "Cuadro de datos de proyectos y estrategía experimental")
-                    ,
+                      "Cuadro de datos de proyectos y estrategía experimental"
+                    ),
                     icon = icon("table"),
                     shinycssloaders::withSpinner(
                       DT::dataTableOutput("experimental_strategy_treedt"),
@@ -746,8 +746,8 @@ fluidPage(
                   # category_type_format_treedt ----
                   tabPanel(
                     title = paste(
-                      "Cuadro de datos categoría, tipo y formato")
-                    ,
+                      "Cuadro de datos categoría, tipo y formato"
+                    ),
                     icon = icon("table"),
                     shinycssloaders::withSpinner(
                       DT::dataTableOutput("category_type_format_treedt"),

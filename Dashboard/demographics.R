@@ -1,10 +1,10 @@
 # race_pie ----
 race_pie <- function(data) {
-  fig <- data %>% 
-    dplyr::select(race) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(race) %>% 
-    tally() %>% 
+  fig <- data %>%
+    dplyr::select(race) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(race) %>%
+    tally() %>%
     dplyr::mutate(
       key_color = case_when(
         race == "white" ~ "#ffa600",
@@ -16,7 +16,7 @@ race_pie <- function(data) {
         race == "native hawaiian or other pacific islander" ~ "#665191",
         race == "Unknown" ~ "#2f4b7c"
       )
-    ) %>% 
+    ) %>%
     plot_ly(
       labels = ~race,
       values = ~n,
@@ -43,14 +43,14 @@ race_pie <- function(data) {
 
 # race_piedt ----
 race_piedt <- function(data) {
-  data <- data %>% 
-    dplyr::select(race) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(race) %>% 
-    tally(name = "Número de casos", sort = TRUE) %>% 
+  data <- data %>%
+    dplyr::select(race) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(race) %>%
+    tally(name = "Número de casos", sort = TRUE) %>%
     rename(
       "Raza" = 1
-    ) %>% 
+    ) %>%
     datatable(
       extensions = "Buttons",
       rownames = FALSE,
@@ -79,11 +79,11 @@ race_piedt <- function(data) {
 
 # ethnicity_pie ----
 ethnicity_pie <- function(data) {
-  fig <- data %>% 
-    dplyr::select(ethnicity) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(ethnicity) %>% 
-    tally() %>% 
+  fig <- data %>%
+    dplyr::select(ethnicity) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(ethnicity) %>%
+    tally() %>%
     dplyr::mutate(
       key_color = case_when(
         ethnicity == "not hispanic or latino" ~ "#C3E2C2",
@@ -92,7 +92,7 @@ ethnicity_pie <- function(data) {
         ethnicity == "Sin dato" ~ "#010101",
         ethnicity == "Unknown" ~ "#2f4b7c"
       )
-    ) %>% 
+    ) %>%
     plot_ly(
       labels = ~ethnicity,
       values = ~n,
@@ -119,14 +119,14 @@ ethnicity_pie <- function(data) {
 
 # ethnicity_piedt ----
 ethnicity_piedt <- function(data) {
-  data <- data %>% 
-    dplyr::select(ethnicity) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(ethnicity) %>% 
-    tally(name = "Número de casos", sort = TRUE) %>% 
+  data <- data %>%
+    dplyr::select(ethnicity) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(ethnicity) %>%
+    tally(name = "Número de casos", sort = TRUE) %>%
     rename(
       "Etnicidad" = 1
-    ) %>% 
+    ) %>%
     datatable(
       extensions = "Buttons",
       rownames = FALSE,
@@ -155,11 +155,11 @@ ethnicity_piedt <- function(data) {
 
 # gender_pie ----
 gender_pie <- function(data) {
-  fig <- data %>% 
-    dplyr::select(gender) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(gender) %>% 
-    tally() %>% 
+  fig <- data %>%
+    dplyr::select(gender) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(gender) %>%
+    tally() %>%
     dplyr::mutate(
       key_color = case_when(
         gender == "female" ~ "#FF90C2",
@@ -167,7 +167,7 @@ gender_pie <- function(data) {
         gender == "male" ~ "#1640D6",
         gender == "Sin dato" ~ "#010101",
       )
-    ) %>% 
+    ) %>%
     plot_ly(
       labels = ~gender,
       values = ~n,
@@ -194,14 +194,14 @@ gender_pie <- function(data) {
 
 # gender_piedt ----
 gender_piedt <- function(data) {
-  data <- data %>% 
-    dplyr::select(gender) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(gender) %>% 
-    tally(name = "Número de casos", sort = TRUE) %>% 
+  data <- data %>%
+    dplyr::select(gender) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(gender) %>%
+    tally(name = "Número de casos", sort = TRUE) %>%
     rename(
       "Género" = 1
-    ) %>% 
+    ) %>%
     datatable(
       extensions = "Buttons",
       rownames = FALSE,
@@ -230,10 +230,10 @@ gender_piedt <- function(data) {
 
 # gender_age_pyramid ----
 gender_age_pyramid <- function(data) {
-  age_pyramid_df <- data %>% 
+  age_pyramid_df <- data %>%
     dplyr::filter(
       gender %in% c("female", "male")
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       `Edad` = age_categories(
         age_at_index,
@@ -241,37 +241,39 @@ gender_age_pyramid <- function(data) {
           0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90
         )
       )
-    ) %>% 
-    dplyr::group_by(gender, Edad) %>% 
+    ) %>%
+    dplyr::group_by(gender, Edad) %>%
     dplyr::tally() %>%
     mutate(
       `Edad` = as.character(`Edad`)
-    ) %>% 
-    replace(is.na(.), "Sin dato") %>% 
+    ) %>%
+    replace(is.na(.), "Sin dato") %>%
     mutate(
       `Edad` = factor(`Edad`)
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       `n` = ifelse(gender == "male", -`n`, `n`),
       abs_pop = abs(`n`)
-    ) %>% 
+    ) %>%
     rename(
       "Género" = "gender",
       "Casos" = "n",
       "Casos absolutos" = "abs_pop"
     )
-  
+
   age_pyramid <- plot_ly(
     data = age_pyramid_df,
     x = ~Casos,
-    y = ~Edad, 
+    y = ~Edad,
     color = ~`Género`,
     colors = c(female = "#FF90C2", male = "#1640D6"),
     textposition = "inside"
-  ) %>% 
-    add_bars(orientation = 'h', hoverinfo = 'text', text = ~`Casos absolutos`) %>%
+  ) %>%
+    add_bars(
+      orientation = "h", hoverinfo = "text", text = ~`Casos absolutos`
+    ) %>%
     layout(
-      bargap = 0.1, barmode = 'overlay',
+      bargap = 0.1, barmode = "overlay",
       xaxis = list(
         title = "Número de caos"
       )
@@ -281,10 +283,10 @@ gender_age_pyramid <- function(data) {
 
 # gender_age_pyramiddt ----
 gender_age_pyramiddt <- function(data) {
-  data <- data %>% 
+  data <- data %>%
     dplyr::filter(
       gender %in% c("female", "male")
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       `Edad` = age_categories(
         age_at_index,
@@ -292,28 +294,28 @@ gender_age_pyramiddt <- function(data) {
           0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90
         )
       )
-    ) %>% 
-    dplyr::group_by(gender, Edad) %>% 
+    ) %>%
+    dplyr::group_by(gender, Edad) %>%
     dplyr::tally() %>%
     mutate(
       `Edad` = as.character(`Edad`)
-    ) %>% 
-    replace(is.na(.), "Sin dato") %>% 
+    ) %>%
+    replace(is.na(.), "Sin dato") %>%
     mutate(
       `Edad` = factor(`Edad`)
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       `n` = ifelse(gender == "male", -`n`, `n`),
       abs_pop = abs(`n`)
-    ) %>% 
+    ) %>%
     rename(
       "Género" = "gender",
       "Casos" = "n",
       "Número de casos" = "abs_pop"
-    ) %>% 
+    ) %>%
     dplyr::select(
       `Género`, Edad, `Número de casos`
-    ) %>% 
+    ) %>%
     datatable(
       extensions = "Buttons",
       rownames = FALSE,
@@ -342,11 +344,11 @@ gender_age_pyramiddt <- function(data) {
 
 # vital_status_pie ----
 vital_status_pie <- function(data) {
-  fig <- data %>% 
-    dplyr::select(vital_status) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(vital_status) %>% 
-    tally() %>% 
+  fig <- data %>%
+    dplyr::select(vital_status) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(vital_status) %>%
+    tally() %>%
     dplyr::mutate(
       key_color = case_when(
         vital_status == "Dead" ~ "#5F8670",
@@ -354,7 +356,7 @@ vital_status_pie <- function(data) {
         vital_status == "Alive" ~ "#5D3587",
         vital_status == "Sin dato" ~ "#010101",
       )
-    ) %>% 
+    ) %>%
     plot_ly(
       labels = ~vital_status,
       values = ~n,
@@ -381,14 +383,14 @@ vital_status_pie <- function(data) {
 
 # vital_status_piedt ----
 vital_status_piedt <- function(data) {
-  data <- data %>% 
-    dplyr::select(vital_status) %>% 
-    replace(is.na(.), "Sin dato") %>% 
-    group_by(vital_status) %>% 
-    tally(name = "Número de casos", sort = TRUE) %>% 
+  data <- data %>%
+    dplyr::select(vital_status) %>%
+    replace(is.na(.), "Sin dato") %>%
+    group_by(vital_status) %>%
+    tally(name = "Número de casos", sort = TRUE) %>%
     rename(
       "Estado vital" = 1
-    ) %>% 
+    ) %>%
     datatable(
       extensions = "Buttons",
       rownames = FALSE,
