@@ -89,7 +89,6 @@ files_results <- GenomicDataCommons::files() %>%
   ) %>% 
   GenomicDataCommons::select(
     c(
-      "file_id",
       "cases.project.project_id",
       "cases.case_id",
       "data_category",
@@ -115,11 +114,14 @@ files_cases <- lapply(
 
 files_results <- as.data.frame(
   within(files_results, rm(cases))
-)
+) %>% 
+  select(-id)
 
 tcga_project_ids_list <- unique(combined_cases$project_id)
 
 case_id_list <- unique(combined_cases$case_id)
+
+file_id_list <- unique(files_results$file_id)
 
 min_diagnosis_age <- floor(
   min(combined_diagnoses$age_at_diagnosis, na.rm = TRUE) / 365

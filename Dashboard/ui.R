@@ -34,7 +34,7 @@ fluidPage(
       width = 300,
       sidebarMenu(
         id = "sidebarid",
-        ## Global filters ----
+        ## Cases filters ----
         ### project_id ----
         selectInput(
           "project_id",
@@ -191,16 +191,66 @@ fluidPage(
           "Incluir NAs en Edad",
           value = TRUE
         ),
-        ## Initial tab ----
-        menuItem(
-          text = "Explorador",
-          tabName = "EXPLORADOR",
-          icon = icon("square-check")
+        ## Files filters ----
+        ### experimental_strategy ----
+        selectInput(
+          "experimental_strategy",
+          label = "Estrategía experimental",
+          choices = c("TODOS"),
+          selected = "TODOS"
         ),
+        bsTooltip(
+          "experimental_strategy",
+          "Seleccionar una estrategía",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        ### data_category ----
+        selectInput(
+          "data_category",
+          label = "Categoría de dato",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "data_category",
+          "Seleccionar una categoría",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        ### data_type ----
+        selectInput(
+          "data_type",
+          label = "Tipo de dato",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "data_type",
+          "Seleccionar un tipo",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        ### data_format ----
+        selectInput(
+          "data_format",
+          label = "Formato de dato",
+          choices = c("TODOS"),
+          selected = "TODOS"
+        ),
+        bsTooltip(
+          "data_format",
+          "Seleccionar un formato",
+          placement = "right", trigger = "hover", options = NULL
+        ),
+        ## EXPLORADOR tab ----
         menuItem(
-          text = "Explorador_old",
-          tabName = "EXPLORADOROLD",
-          icon = icon("square-check")
+          text = "Casos",
+          tabName = "EXPLORADOR",
+          icon = icon("hospital-user")
+        ),
+        ## ARCHIVOS tab ----
+        menuItem(
+          text = "Archivos",
+          tabName = "ARCHIVOS",
+          icon = icon("file", class = "fa-solid")
         )
       )
     ),
@@ -618,6 +668,272 @@ fluidPage(
                     icon = icon("table"),
                     shinycssloaders::withSpinner(
                       DT::dataTableOutput("gender_age_pyramiddt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          ## ARCHIVOS ----
+          tabItem(
+            tabName = "ARCHIVOS",
+            fluidRow(
+              valueBoxOutput("box_f_proyectos", width = 4),
+              valueBoxOutput("box_f_casos", width = 4),
+              valueBoxOutput("box_f_archivos", width = 4)
+            ),
+            ### TREEMAPS ----
+            fluidRow(
+              width = 12,
+              box(
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Composición de los archivos",
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  # experimental_strategy_treemap ----
+                  tabPanel(
+                    title = paste(
+                      "Mapa de arbol de proyectos y estrategía experimental"
+                    ),
+                    icon = icon("table-cells"),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "experimental_strategy_treemap",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Prueba hacer click para expandir la información")
+                    )
+                  ),
+                  # experimental_strategy_treedt ----
+                  tabPanel(
+                    title = paste(
+                      "Cuadro de datos de proyectos y estrategía experimental")
+                    ,
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("experimental_strategy_treedt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  # category_type_format_treemap ----
+                  tabPanel(
+                    title = paste(
+                      "Mapa de arbol de categoría, tipo y formato"
+                    ),
+                    icon = icon("table-cells"),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "category_type_format_treemap",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    ),
+                    tags$caption(
+                      class = "text-center",
+                      style = "caption-side: bottom; text-align: center;",
+                      em("Prueba hacer click para expandir la información")
+                    )
+                  ),
+                  # category_type_format_treedt ----
+                  tabPanel(
+                    title = paste(
+                      "Cuadro de datos categoría, tipo y formato")
+                    ,
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("category_type_format_treedt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            ),
+            fluidRow(
+              width = 12,
+              box(
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Cantidad de archivos por variable",
+                tabBox(
+                  width = 6,
+                  height = NULL,
+                  # file_project_bar ----
+                  tabPanel(
+                    title = "Archivos por proyecto",
+                    icon = icon("chart-pie"),
+                    h4(
+                      class = "text-center",
+                      "Archivos por proyecto"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "file_project_bar",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### file_project_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("file_project_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                ),
+                tabBox(
+                  width = 6,
+                  height = NULL,
+                  # experimental_strategy_bar ----
+                  tabPanel(
+                    title = "Archivos por estrategi experimental",
+                    icon = icon("chart-pie"),
+                    h4(
+                      class = "text-center",
+                      "Archivos por Estrategia Experimental"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "experimental_strategy_bar",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### experimental_strategy_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("experimental_strategy_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                ),
+                tabBox(
+                  width = 6,
+                  height = NULL,
+                  # data_category_bar ----
+                  tabPanel(
+                    title = "Archivos por categoría de dato",
+                    icon = icon("chart-pie"),
+                    h4(
+                      class = "text-center",
+                      "Archivos por Categoría de Dato"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "data_category_bar",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### data_category_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("data_category_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                ),
+                tabBox(
+                  width = 6,
+                  height = NULL,
+                  # data_type_format_bar ----
+                  tabPanel(
+                    title = "Archivos por tipo y formato de dato",
+                    icon = icon("chart-pie"),
+                    h4(
+                      class = "text-center",
+                      "Archivos por Tipo y Formato de Dato"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "data_type_format_bar",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### data_type_format_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("data_type_format_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                ),
+                tabBox(
+                  width = 6,
+                  height = NULL,
+                  # data_type_bar ----
+                  tabPanel(
+                    title = "Archivos por tipo de dato",
+                    icon = icon("chart-pie"),
+                    h4(
+                      class = "text-center",
+                      "Archivos por Tipo de Dato"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "data_type_bar",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### data_type_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("data_type_bardt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                ),
+                tabBox(
+                  width = 6,
+                  height = NULL,
+                  # data_format_bar ----
+                  tabPanel(
+                    title = "Archivos por formato de dato",
+                    icon = icon("chart-pie"),
+                    h4(
+                      class = "text-center",
+                      "Archivos por Formato de Dato"
+                    ),
+                    shinycssloaders::withSpinner(
+                      plotlyOutput(
+                        "data_format_bar",
+                        height = 500
+                      ),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### data_format_bardt ----
+                  tabPanel(
+                    title = "Cuadro de datos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("data_format_bardt"),
                       color = "#1c9ad6", type = "8", size = 0.5
                     )
                   )

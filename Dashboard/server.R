@@ -140,12 +140,57 @@ function(input, output, session) {
     combined_diagnoses_reactive
   })
   
+  
+  ## files_results_reactive ----
+  files_results_reactive <- reactive({
+    files_results_reactive <- files_results
+    
+    if (input$experimental_strategy != "TODOS") {
+      files_results_reactive <- files_results_reactive %>% 
+        dplyr::filter(
+          experimental_strategy == input$experimental_strategy
+        )
+    }
+    
+    if (input$data_category != "TODOS") {
+      files_results_reactive <- files_results_reactive %>% 
+        dplyr::filter(
+          data_category == input$data_category
+        )
+    }
+    
+    if (input$data_type != "TODOS") {
+      files_results_reactive <- files_results_reactive %>% 
+        dplyr::filter(
+          data_type == input$data_type
+        )
+    }
+    
+    if (input$data_format != "TODOS") {
+      files_results_reactive <- files_results_reactive %>% 
+        dplyr::filter(
+          data_format == input$data_format
+        )
+    }
+    
+    files_results_reactive
+  })
+  
+  ## files_cases_reactive ----
+  files_cases_reactive <- reactive({
+    files_cases_reactive <- files_cases %>% 
+      dplyr::filter(
+        file_id %in% files_results_reactive()$file_id
+      )
+    
+    files_cases_reactive
+  })
+  
   ## case_ids_list ----
   case_ids <- reactiveValues()
   case_ids$case_id <- case_id_list
-  ### Observers ----
   
-
+  ### Observers ----
   ## disease_type filter ----
   diseases_types_reactive <- reactive({
     unique(combined_cases_reactive()$disease_type)
@@ -327,6 +372,94 @@ function(input, output, session) {
       selected = input$gender
     )
   })
+  
+  # experimental_strategy_reactive filter ----
+  experimental_strategy_reactive <- reactive({
+    unique(files_results_reactive()[
+      !is.na(files_results_reactive()$experimental_strategy),
+      "experimental_strategy"
+    ])
+    
+  })
+  
+  experimental_strategy_list <- reactive({
+    c("TODOS", experimental_strategy_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "experimental_strategy",
+      choices = experimental_strategy_list(),
+      selected = input$experimental_strategy
+    )
+  })
+  
+  # data_category_reactive filter ----
+  data_category_reactive <- reactive({
+    unique(files_results_reactive()[
+      !is.na(files_results_reactive()$data_category),
+      "data_category"
+    ])
+    
+  })
+  
+  data_category_list <- reactive({
+    c("TODOS", data_category_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "data_category",
+      choices = data_category_list(),
+      selected = input$data_category
+    )
+  })
+  
+  # data_type_reactive filter ----
+  data_type_reactive <- reactive({
+    unique(files_results_reactive()[
+      !is.na(files_results_reactive()$data_type),
+      "data_type"
+    ])
+    
+  })
+  
+  data_type_list <- reactive({
+    c("TODOS", data_type_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "data_type",
+      choices = data_type_list(),
+      selected = input$data_type
+    )
+  })
+  
+  # data_format_reactive filter ----
+  data_format_reactive <- reactive({
+    unique(files_results_reactive()[
+      !is.na(files_results_reactive()$data_format),
+      "data_format"
+    ])
+    
+  })
+  
+  data_format_list <- reactive({
+    c("TODOS", data_format_reactive())
+  })
+  
+  observe({
+    updateSelectInput(
+      session,
+      "data_format",
+      choices = data_format_list(),
+      selected = input$data_format
+    )
+  })
 
 
   
@@ -336,528 +469,6 @@ function(input, output, session) {
   box_data$proyectos <- 0
   box_data$casos <- 0
   box_data$disease_type <- 0
-  
-  #### Observe project_id ----
-  observeEvent(input$project_id, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-    
-    
-  })
-  
-  #### Observe disease_type ----
-  observeEvent(input$disease_type, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "disease_type"
-        ]
-      )
-    )
-    
-  })
-  
-  #### Observe primary_site ----
-  observeEvent(input$primary_site, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "disease_type"
-        ]
-      )
-    )
-    
-  })
-  
-  #### Observe age_at_diagnosis ----
-  observeEvent(input$age_at_diagnosis, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe age_at_diagnosis_na ----
-  observeEvent(input$age_at_diagnosis_na, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe tissue_or_organ_of_origin ----
-  observeEvent(input$tissue_or_organ_of_origin, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe primary_diagnosis ----
-  observeEvent(input$primary_diagnosis, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe ajcc_pathologic_stage ----
-  observeEvent(input$ajcc_pathologic_stage, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe race ----
-  observeEvent(input$race, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe ethnicity ----
-  observeEvent(input$ethnicity, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe vital_status ----
-  observeEvent(input$vital_status, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe gender ----
-  observeEvent(input$gender, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe age_at_index ----
-  observeEvent(input$age_at_index, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
-  
-  #### Observe age_at_index_na ----
-  observeEvent(input$age_at_index_na, {
-    case_ids$case_id <- unique(
-      intersect(
-        intersect(
-          combined_diagnoses_reactive()$case_id,
-          combined_demographics_reactive()$case_id 
-        ),
-        combined_cases_reactive()$case_id
-      )
-    )
-    box_data$proyectos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "project_id"
-        ]
-      )
-    )
-    box_data$casos <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id, 
-          "case_id"
-        ]
-      )
-    )
-    box_data$disease_type <- length(
-      unique(
-        combined_cases_reactive()[
-          combined_cases_reactive()$case_id %in% case_ids$case_id,
-          "disease_type"
-        ]
-      )
-    )
-  })
   
   #### Boxes ----
   ##### Proyectos ----
@@ -902,7 +513,950 @@ function(input, output, session) {
     )
   })
   
+  ### Observers ----
+  
+  #### Observe project_id ----
+  observeEvent(input$project_id, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+    
+  })
+  
+  #### Observe disease_type ----
+  observeEvent(input$disease_type, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "disease_type"
+        ]
+      )
+    )
+    
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe primary_site ----
+  observeEvent(input$primary_site, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+    
+  })
+  
+  #### Observe age_at_diagnosis ----
+  observeEvent(input$age_at_diagnosis, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe age_at_diagnosis_na ----
+  observeEvent(input$age_at_diagnosis_na, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe tissue_or_organ_of_origin ----
+  observeEvent(input$tissue_or_organ_of_origin, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe primary_diagnosis ----
+  observeEvent(input$primary_diagnosis, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe ajcc_pathologic_stage ----
+  observeEvent(input$ajcc_pathologic_stage, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe race ----
+  observeEvent(input$race, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe ethnicity ----
+  observeEvent(input$ethnicity, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe vital_status ----
+  observeEvent(input$vital_status, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe gender ----
+  observeEvent(input$gender, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe age_at_index ----
+  observeEvent(input$age_at_index, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
 
+  
+  #### Observe age_at_index_na ----
+  observeEvent(input$age_at_index_na, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe experimental_strategy ----
+  observeEvent(input$experimental_strategy, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe data_category ----
+  observeEvent(input$data_category, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe data_type ----
+  observeEvent(input$data_type, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
+  
+  #### Observe data_format ----
+  observeEvent(input$data_format, {
+    case_ids$case_id <- unique(
+      intersect(
+        intersect(
+          intersect(
+            combined_diagnoses_reactive()$case_id,
+            combined_demographics_reactive()$case_id 
+          ),
+          combined_cases_reactive()$case_id
+        ),
+        files_cases_reactive()$case_id
+      )
+    )
+    file_ids$file_id <- unique(
+      files_results_reactive()$file_id
+    )
+    
+    box_data$proyectos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "project_id"
+        ]
+      )
+    )
+    box_data$casos <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id, 
+          "case_id"
+        ]
+      )
+    )
+    box_data$disease_type <- length(
+      unique(
+        combined_cases_reactive()[
+          combined_cases_reactive()$case_id %in% case_ids$case_id,
+          "disease_type"
+        ]
+      )
+    )
+    box_data$archivos <- length(
+      unique(
+        files_results_reactive()[
+          files_results_reactive()$file_id %in% file_ids$file_id,
+          "file_id"
+        ]
+      )
+    )
+  })
   
   ### Project ----
   #### project_disease_type_treemap ----
@@ -1188,5 +1742,225 @@ function(input, output, session) {
   })
   
 
+  ## Files ----
+  ## file_ids_list ----
+  file_ids <- reactiveValues()
+  file_ids$file_id <- file_id_list
   
-}
+  ### Value boxes ----
+  box_data$archivos <- 0
+  ##### Proyectos ----
+  output$box_f_proyectos <- renderValueBox({
+    valueBox(
+      vb_style(
+        box_data$proyectos, "font-size: 90%;"
+      ),
+      vb_style(
+        "Número de proyectos", "font-size: 95%;"
+      ),
+      icon = icon("wand-magic-sparkles"),
+      color = "purple"
+    )
+  })
+  
+  ##### Casos ----
+  output$box_f_casos <- renderValueBox({
+    valueBox(
+      vb_style(
+        box_data$casos, "font-size: 90%;"
+      ),
+      vb_style(
+        "Número de casos", "font-size: 95%;"
+      ),
+      icon = icon("user"),
+      color = "purple"
+    )
+  })
+  
+  ##### Archivos ----
+  output$box_f_archivos <- renderValueBox({
+    valueBox(
+      vb_style(
+        box_data$archivos, "font-size: 90%;"
+      ),
+      vb_style(
+        "Número de archivos", "font-size: 95%;"
+      ),
+      icon = icon("file", class = "fa-solid"),
+      color = "purple"
+    )
+  })
+  
+  ### Treemaps ----
+  #### experimental_strategy_treemap ----
+  output$experimental_strategy_treemap <- renderPlotly({
+    experimental_strategy_treemap(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        ),
+      files_cases_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id &
+            case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### experimental_strategy_treedt ----
+  output$experimental_strategy_treedt <- DT::renderDataTable({
+    experimental_strategy_treedt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        ),
+      files_cases_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id &
+            case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### category_type_format_treemap ----
+  output$category_type_format_treemap <- renderPlotly({
+    category_type_format_treemap(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### category_type_format_treedt ----
+  output$category_type_format_treedt <- DT::renderDataTable({
+    category_type_format_treedt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### file_project_bar ----
+  output$file_project_bar <- renderPlotly({
+    file_project_bar(
+      files_cases_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id &
+            case_id %in% case_ids$case_id
+        )
+    )
+  })
+  
+  #### file_project_bardt ----
+  output$file_project_bardt <- DT::renderDataTable({
+    file_project_bardt(
+      files_cases_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id &
+            case_id %in% case_ids$case_id
+        )
+    )
+  })
+
+  #### experimental_strategy_bar ----
+  output$experimental_strategy_bar <- renderPlotly({
+    experimental_strategy_bar(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### experimental_strategy_bardt ----
+  output$experimental_strategy_bardt <- DT::renderDataTable({
+    experimental_strategy_bardt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_category_bar ----
+  output$data_category_bar <- renderPlotly({
+    data_category_bar(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_category_bardt ----
+  output$data_category_bardt <- DT::renderDataTable({
+    data_category_bardt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_type_format_bar ----
+  output$data_type_format_bar <- renderPlotly({
+    data_type_format_bar(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_type_format_bardt ----
+  output$data_type_format_bardt <- DT::renderDataTable({
+    data_type_format_bardt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_type_bar ----
+  output$data_type_bar <- renderPlotly({
+    data_type_bar(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_type_bardt ----
+  output$data_type_bardt <- DT::renderDataTable({
+    data_type_bardt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_format_bar ----
+  output$data_format_bar <- renderPlotly({
+    data_format_bar(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  
+  #### data_format_bardt ----
+  output$data_format_bardt <- DT::renderDataTable({
+    data_format_bardt(
+      files_results_reactive() %>% 
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+  }

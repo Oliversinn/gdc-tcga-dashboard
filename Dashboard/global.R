@@ -29,7 +29,7 @@ vb_style <- function(msg = '', style="font-size: 100%;") {
 Sys.setenv(OPENSSL_CONF = "/dev/null")
 options(shiny.fullstacktrace = TRUE)
 
-source("explorer.R")
 source("project.R")
 source("diagnosis.R")
 source("demographics.R")
+source("files.R")
