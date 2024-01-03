@@ -251,6 +251,12 @@ fluidPage(
           text = "Archivos",
           tabName = "ARCHIVOS",
           icon = icon("file", class = "fa-solid")
+        ),
+        ## DESCARGAS tab ----
+        menuItem(
+          text = "Descargas",
+          tabName = "DESCARGAS",
+          icon = icon("download", class = "fa-solid")
         )
       )
     ),
@@ -694,7 +700,7 @@ fluidPage(
                 tabBox(
                   width = 12,
                   height = NULL,
-                  # experimental_strategy_treemap ----
+                  #### experimental_strategy_treemap ----
                   tabPanel(
                     title = paste(
                       "Mapa de arbol de proyectos y estrategía experimental"
@@ -713,7 +719,7 @@ fluidPage(
                       em("Prueba hacer click para expandir la información")
                     )
                   ),
-                  # experimental_strategy_treedt ----
+                  #### experimental_strategy_treedt ----
                   tabPanel(
                     title = paste(
                       "Cuadro de datos de proyectos y estrategía experimental"
@@ -724,7 +730,7 @@ fluidPage(
                       color = "#1c9ad6", type = "8", size = 0.5
                     )
                   ),
-                  # category_type_format_treemap ----
+                  #### category_type_format_treemap ----
                   tabPanel(
                     title = paste(
                       "Mapa de arbol de categoría, tipo y formato"
@@ -743,7 +749,7 @@ fluidPage(
                       em("Prueba hacer click para expandir la información")
                     )
                   ),
-                  # category_type_format_treedt ----
+                  #### category_type_format_treedt ----
                   tabPanel(
                     title = paste(
                       "Cuadro de datos categoría, tipo y formato"
@@ -767,7 +773,7 @@ fluidPage(
                 tabBox(
                   width = 6,
                   height = NULL,
-                  # file_project_bar ----
+                  #### file_project_bar ----
                   tabPanel(
                     title = "Archivos por proyecto",
                     icon = icon("chart-pie"),
@@ -796,7 +802,7 @@ fluidPage(
                 tabBox(
                   width = 6,
                   height = NULL,
-                  # experimental_strategy_bar ----
+                  #### experimental_strategy_bar ----
                   tabPanel(
                     title = "Archivos por estrategi experimental",
                     icon = icon("chart-pie"),
@@ -825,7 +831,7 @@ fluidPage(
                 tabBox(
                   width = 6,
                   height = NULL,
-                  # data_category_bar ----
+                  #### data_category_bar ----
                   tabPanel(
                     title = "Archivos por categoría de dato",
                     icon = icon("chart-pie"),
@@ -854,7 +860,7 @@ fluidPage(
                 tabBox(
                   width = 6,
                   height = NULL,
-                  # data_type_format_bar ----
+                  #### data_type_format_bar ----
                   tabPanel(
                     title = "Archivos por tipo y formato de dato",
                     icon = icon("chart-pie"),
@@ -883,7 +889,7 @@ fluidPage(
                 tabBox(
                   width = 6,
                   height = NULL,
-                  # data_type_bar ----
+                  #### data_type_bar ----
                   tabPanel(
                     title = "Archivos por tipo de dato",
                     icon = icon("chart-pie"),
@@ -912,7 +918,7 @@ fluidPage(
                 tabBox(
                   width = 6,
                   height = NULL,
-                  # data_format_bar ----
+                  #### data_format_bar ----
                   tabPanel(
                     title = "Archivos por formato de dato",
                     icon = icon("chart-pie"),
@@ -940,8 +946,244 @@ fluidPage(
                 )
               )
             )
+          ),
+          ## DESCARGAS ----
+          tabItem(
+            tabName = "DESCARGAS",
+            fluidRow(
+              width = 12,
+              ### Bases de datos ----
+              box(
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                title = "Bases de datos",
+                tags$div(
+                  style = "text-align: justify; padding: 10px;",
+                  paste(
+                    "Nuestro conjunto de datos se compone de cinco bases",
+                    "fundamentales para el análisis y la comprensión detallada",
+                    "del panorama clínico y genómico de nuestros casos.",
+                    "Estas bases abarcan información crucial:"
+                  ),
+                  br(),
+                  br(),
+                  tags$ol(
+                    tags$li(
+                      tags$b("Casos por Proyecto:"),
+                      paste(
+                        "Una recopilación detallada de",
+                        "casos clasificados por proyectos específicos,",
+                        "permitiendo un enfoque más específico en áreas de",
+                        "interés."
+                      )
+                    ),
+                    tags$li(
+                      tags$b("Casos y su Demografía:"),
+                      paste(
+                        "Ofrece una visión completa",
+                        "de los casos junto con sus detalles demográficos",
+                        "esenciales, incluyendo datos como edad, género, y",
+                        "otros factores relevantes."
+                      )
+                    ),
+                    tags$li(
+                      tags$b("Casos y su Diagnóstico:"),
+                      paste(
+                        "Esta base de datos",
+                        "contiene información detallada sobre los diagnósticos",
+                        "asociados a cada caso, brindando una comprensión",
+                        "más profunda de las condiciones y patologías",
+                        "presentes."
+                      )
+                    ),
+                    tags$li(
+                      tags$b("Archivos:"),
+                      paste(
+                        "Proporciona información detallada sobre los",
+                        "archivos asociados a cada caso, facilitando el acceso",
+                        "a datos específicos."
+                      )
+                    ),
+                    tags$li(
+                      tags$b("Mapeo de Archivos con Casos:"),
+                      paste(
+                        "Proporciona una conexión crucial entre los archivos",
+                        "específicos y los casos a los que pertenecen,",
+                        "facilitando el acceso y la referencia cruzada de",
+                        "información relevante."
+                      )
+                    )
+                  ),
+                  br(),
+                  tags$b("Filtros y su Impacto:"),
+                  paste(
+                    "Es importante resaltar que",
+                    "cada una de estas bases de datos se ve directamente",
+                    "afectada por los filtros aplicados. Los filtros",
+                    "aplicados en la plataforma modifican dinámicamente",
+                    "la información disponible en estas bases,",
+                    "permitiendo una exploración detallada y",
+                    "personalizada según los criterios seleccionados."
+                  ),
+                  br(),
+                  br(),
+                  paste(
+                    "Cada una de estas bases de datos puede descargarse",
+                    "fácilmente en formatos CSV o Excel, garantizando la",
+                    "accesibilidad y flexibilidad necesarias para el",
+                    "análisis personalizado y la investigación."
+                  ),
+                  br(),
+                  br()
+                ),
+                tabBox(
+                  width = 12,
+                  height = NULL,
+                  #### combined_cases_dt ----
+                  tabPanel(
+                    title = "Casos por proyecto",
+                    icon = icon("user-group", class = "fa-solid"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("combined_cases_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### combined_demographics_dt ----
+                  tabPanel(
+                    title = "Casos y su demografía",
+                    icon = icon("id-card", class = "fa-solid"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("combined_demographics_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### combined_diagnosis_dt ----
+                  tabPanel(
+                    title = "Casos y sus diagnósticos",
+                    icon = icon("comment-medical", class = "fa-solid"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("combined_diagnosis_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### files_results_dt ----
+                  tabPanel(
+                    title = "Archivos",
+                    icon = icon("file", class = "fa-solid"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("files_results_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  ),
+                  #### files_cases_dt ----
+                  tabPanel(
+                    title = "Mapeo de archivos, casos y proyectos",
+                    icon = icon("table"),
+                    shinycssloaders::withSpinner(
+                      DT::dataTableOutput("files_cases_dt"),
+                      color = "#1c9ad6", type = "8", size = 0.5
+                    )
+                  )
+                )
+              )
+            ),
+            ### Tutorial de descargas ----
+            fluidRow(
+              width = 12,
+              box(
+                width = 12,
+                collapsible = TRUE,
+                solidHeader = TRUE,
+                title = "Descarga de archivos genómicos de GDC - TCGA",
+                tags$div(
+                  style = "text-align: justify; padding: 10px;",
+                  paste(
+                    "Para descargar archivos genómicos de GDC - TCGA, se",
+                    "necesita un archivo al que le llaman un manifiesto. Este",
+                    "manifiesto es un archivo de texto plano que contiene",
+                    "información sobre los archivos que se desean descargar.",
+                    "Como manifiesto se puede usar la base de datos de",
+                    "Archivos de esta plataforma, la cual contiene los IDs",
+                    "de los archivos que se desean descargar. Recomiendo",
+                    "descargar los archivos en formato CSV ya que este será",
+                    "el formato usado en esta demostración."
+                  ),
+                  br(),
+                  br(),
+                  paste(
+                    "Una vez descargado el manifiesto, se deben utilizar",
+                    "unas funciones de R para descargar los archivos. Estas",
+                    "funciones se encuentran en el paquete",
+                    "GenomicDataCommons. Este paquete se instala de la",
+                    "siguiete manera:"
+                  ),
+                  br(),
+                  br(),
+                  verbatimTextOutput("install_gdc"),
+                  br(),
+                  paste(
+                    "Una vez instalado el paquete de R, debemos cargar la",
+                    "librería, cargar el manifiesto y descargar los archivos",
+                    "utilizando las funcionalidades de GenomicDataCommons.",
+                    "La primera vez que se descargan los datos, R solicitará",
+                    "crear un directorio de caché (consulte ?gdc_cache para",
+                    "obtener detalles sobre cómo configurar e interactuar con",
+                    "el caché). Los archivos descargados resultantes se",
+                    "almacenarán en el directorio de caché. El acceso futuro a",
+                    "los mismos archivos será directamente desde la memoria",
+                    "caché, lo que aliviará las descargas múltiples."
+                  ),
+                  br(),
+                  br(),
+                  verbatimTextOutput("download_gdc"),
+                  tags$b("Nota:"),
+                  paste(
+                    "Es importante que cambien la ruta del archivo a la ruta",
+                    "del archivo en su computadora. Si no saben como hacerlo",
+                    "pueden visitar estos links para"
+                  ),
+                  tags$a(
+                    href = paste0(
+                      "https://es.wikihow.com/encontrar-la-ruta-de-un-archivo",
+                      "-en-Windows"
+                    ),
+                    target = "_blank",
+                    "Windows"
+                  ),
+                  ", ",
+                  tags$a(
+                    href = paste0(
+                      "https://support.apple.com/es-lamr/guide/mac-help/mchlp",
+                      "1774/mac"
+                    ),
+                    target = "_blank",
+                    "Mac"
+                  ),
+                  " o ",
+                  tags$a(
+                    href = paste0(
+                      "https://www.hostinger.es/tutoriales/como-usar-comando",
+                      "-find-locate-en-linux/"
+                    ),
+                    target = "_blank",
+                    "Linux"
+                  ),
+                  br(),
+                  tags$b("Nota:"),
+                  paste(
+                    "Tambien es importante mencionar que los archivos suelen",
+                    "ser muy pesados, por lo que se recomiendo que descarguen",
+                    "los archivos por bloque y con una buena conexión a",
+                    "internet. Como se menciona anteriormente, la primera vez",
+                    "que se descargan los archivos, R nos preguntará sobre",
+                    "la creación de la carpeta de cache, por lo que hay que",
+                    "estar pendiente a este mensaje."
+                  )
+                )
+              )
+            )
           )
-          ## NEW TAB HERE ----
         )
       )
     )

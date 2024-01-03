@@ -1,29 +1,4 @@
 function(input, output, session) {
-  # Filters ---
-  ## projects_reactive ----
-  projects_reactive <- reactive({
-    projects <- GenomicDataCommons::projects() %>%
-      GenomicDataCommons::filter(program.name == "TCGA") %>%
-      GenomicDataCommons::facet(c("name", "project_id"))
-
-    if (input$project_id != "TODOS") {
-      projects <- projects %>%
-        GenomicDataCommons::filter(project_id == input$project_id)
-    }
-
-    if (input$disease_type != "TODOS") {
-      projects <- projects %>%
-        GenomicDataCommons::filter(disease_type == input$disease_type)
-    }
-
-    if (input$primary_site != "TODOS") {
-      projects <- projects %>%
-        GenomicDataCommons::filter(primary_site == input$primary_site)
-    }
-
-    projects <- projects %>%
-      GenomicDataCommons::results_all()
-  })
 
   ## combined_cases_reactive ----
   combined_cases_reactive <- reactive({
@@ -1948,6 +1923,86 @@ function(input, output, session) {
         dplyr::filter(
           file_id %in% file_ids$file_id
         )
+    )
+  })
+
+  ## Downloads ----
+  ### combined_cases_dt ----
+  output$combined_cases_dt <- DT::renderDataTable({
+    combined_cases_dt(
+      combined_cases_reactive() %>%
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+
+  ### combined_diagnosis_dt ----
+  output$combined_diagnosis_dt <- DT::renderDataTable({
+    combined_diagnosis_dt(
+      combined_diagnoses_reactive() %>%
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+
+  ### combined_demographics_dt ----
+  output$combined_demographics_dt <- DT::renderDataTable({
+    combined_demographics_dt(
+      combined_demographics_reactive() %>%
+        dplyr::filter(
+          case_id %in% case_ids$case_id
+        )
+    )
+  })
+
+  ### files_cases_dt ----
+  output$files_cases_dt <- DT::renderDataTable({
+    files_cases_dt(
+      files_cases_reactive() %>%
+        dplyr::filter(
+          file_id %in% file_ids$file_id &
+            case_id %in% case_ids$case_id
+        )
+    )
+  })
+
+  ### files_results_dt ----
+  output$files_results_dt <- DT::renderDataTable({
+    files_results_dt(
+      files_results_reactive() %>%
+        dplyr::filter(
+          file_id %in% file_ids$file_id
+        )
+    )
+  })
+
+  output$install_gdc <- renderPrint({
+    cat(
+      paste(
+        "if (!require(\"BiocManager\", quietly = TRUE))",
+        "  install.packages(\"BiocManager\")",
+        "  BiocManager::install(\"GenomicDataCommons\")",
+        sep = "\n"
+      )
+    )
+  })
+
+  output$download_gdc <- renderPrint({
+    cat(
+      paste(
+        "# Cargar la librería de GenomicDataCommons",
+        "library(\"GenomicDataCommons\")",
+        "",
+        "# Cargar el manifiesto a la sesión de R",
+        "# read.csv recibe como parametro la ruta del archivo",
+        "manifiesto <- read.csv(\"base_de_datos_archivos.csv\")",
+        "",
+        "# Descarga de archivos genómicos",
+        "vfile_names <- lapply(file_names$file_id, gdcdata)",
+        sep = "\n"
+      )
     )
   })
 }
