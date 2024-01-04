@@ -16,12 +16,6 @@ library(BiocManager)
 load(file = "tcga.RData")
 tcga_project_ids_list <- c("TODOS", tcga_project_ids_list)
 
-# Static data ----
-projects <- GenomicDataCommons::projects() %>%
-  GenomicDataCommons::filter(program.name == "TCGA") %>%
-  GenomicDataCommons::facet(c("name", "project_id")) %>%
-  results_all()
-
 vb_style <- function(msg = "", style = "font-size: 100%;") {
   tags$p(msg, style = style)
 }
