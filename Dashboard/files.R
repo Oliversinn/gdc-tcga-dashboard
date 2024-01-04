@@ -42,7 +42,7 @@ category_type_format_treemap <- function(data) {
       data_format = paste(Casos.y, data_format)
     ) %>%
     ungroup() %>%
-    select(
+    dplyr::select(
       label, data_format, Casos.y
     ) %>%
     rename(
