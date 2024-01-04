@@ -14,7 +14,7 @@ primary_diagnosis_treemap <- function(data) {
 
   primary_diagnosis_tree_df <- data %>%
     mutate(
-      parent = "Tejido u órgano de origen y sus diagnosticos"
+      parent = "Tejido u órgano de origen y sus diagnósticos"
     ) %>%
     group_by(parent, tissue_or_organ_of_origin) %>%
     tally(name = "cases") %>%
